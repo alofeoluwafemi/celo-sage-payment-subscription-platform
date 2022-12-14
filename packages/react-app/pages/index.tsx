@@ -1,9 +1,19 @@
+import { useCelo } from "@celo/react-celo";
 import PaymentCard from "../components/PaymentCard";
 
+const truncateAddress = (address: string) => {
+  return `${address.slice(0, 6)}...${address.slice(38)}`;
+};
+
 export default function Home() {
+  const { address, network, connect, destroy } = useCelo();
+
   return (
     <div>
       <div className="w-full py-5 text-right border border-t-0 border-x-0 border-gray-100 px-4 mb-4">
+        <span className="text-white mr-4 disbaled bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900">
+          {truncateAddress("0x3472059945ee170660a9a97892a3cf77857eba3a")}
+        </span>
         <button className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900">
           Connect Wallet
         </button>
