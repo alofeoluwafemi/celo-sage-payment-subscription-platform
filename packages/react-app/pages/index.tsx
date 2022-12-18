@@ -11,12 +11,33 @@ export default function Home() {
   return (
     <div>
       <div className="w-full py-5 text-right border border-t-0 border-x-0 border-gray-100 px-4 mb-4">
-        <span className="text-white mr-4 disbaled bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900">
-          {truncateAddress("0x3472059945ee170660a9a97892a3cf77857eba3a")}
-        </span>
-        <button className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900">
-          Connect Wallet
-        </button>
+        {address ? (
+          <>
+            <span className="text-white mr-4 disbaled bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900">
+              {network.name}
+            </span>
+
+            <span className="text-white mr-4 disbaled bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900">
+              {truncateAddress(address)}
+            </span>
+
+            <button
+              onClick={() => destroy().catch((e) => console.log(e))}
+              className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900"
+            >
+              Disconnect
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={() => connect().catch((e) => console.log(e))}
+              className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-purple-900"
+            >
+              Connect Wallet
+            </button>
+          </>
+        )}
       </div>
 
       <div className="container mx-auto">
@@ -31,13 +52,13 @@ export default function Home() {
         </div>
         <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
           <div className="flex">
-            <PaymentCard planName={"Starter"} price={5} />
+            <PaymentCard planName={"Basic"} price={2} />
           </div>
           <div className="flex">
-            <PaymentCard planName={"Company"} price={12} />
+            <PaymentCard planName={"Premium"} price={5} />
           </div>
           <div className="flex">
-            <PaymentCard planName={"Enterprise"} price={25} />
+            <PaymentCard planName={"Enterprise"} price={12} />
           </div>
         </div>
       </div>

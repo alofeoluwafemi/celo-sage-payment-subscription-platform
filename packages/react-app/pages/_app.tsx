@@ -1,4 +1,5 @@
 import "../styles/globals.css";
+import '@celo/react-celo/lib/styles.css';
 import type { AppProps } from "next/app";
 import { Alfajores, CeloProvider } from "@celo/react-celo";
 

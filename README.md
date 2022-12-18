@@ -4,9 +4,41 @@ In this tutorial, we will show you how to create a subscription platform using t
 
 ## Setup
 
-```
-yarn
+Install dependecies
 
+```bash
+//In root folder
+yarn
+```
+
+Create `.env` file in `packages/hardhat` folder.
+
+Paste the default inside
+
+```env
+PRIVATE_KEY=0xba28d5cea192f121db5f1dd7f501532170bb7bb984c4d3747df3e251e529f77d
+ACCOUNT_ADDRESS=0x81cb394E24e5AeA53C3BD6f3d48b43e9A3817CC6
+```
+
+Generate your own private key and address.
+
+```
+npx hardhat create-account
+```
+
+Fund your address with test tokens from Celo public faucet https://celo.org/developers/faucet.
+
+## Run Test
+
+```bash
+npx hardhat test test/subscription-test.js --network hardhat
+```
+
+## Deploy
+
+Deploy contract on Alfajores
+
+```bash
 cd packages/hardhat
 
 yarn run deloy
@@ -15,3 +47,7 @@ cd packages/react-app
 
 yarn run dev
 ```
+
+## Further reasouces
+
+- https://celo-composer-community-docs.vercel.app/
