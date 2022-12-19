@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
 contract PaymentSubscription is Pausable, Ownable {
     //Available plans
@@ -23,6 +24,7 @@ contract PaymentSubscription is Pausable, Ownable {
 
     //Plan details
     struct PlanDetail {
+        Plan plan;
         uint256 price;
         uint256 duration;
     }
@@ -45,15 +47,20 @@ contract PaymentSubscription is Pausable, Ownable {
     address public subscriptionToken;
 
     constructor(address _subscriptionToken) {
-        plans[Plan.Basic] = PlanDetail(2e18, 30 * 1 days);
-        plans[Plan.Premium] = PlanDetail(5e18, 30 * 1 days);
-        plans[Plan.Enterprise] = PlanDetail(12e18, 30 * 1 days);
+        require(_subscriptionToken != address(0), "Invalid token address");
+        plans[Plan.Basic] = PlanDetail(Plan.Basic, 2e18, 30 * 1 days);
+        plans[Plan.Premium] = PlanDetail(Plan.Premium, 5e18, 30 * 1 days);
+        plans[Plan.Enterprise] = PlanDetail(
+            Plan.Enterprise,
+            12e18,
+            30 * 1 days
+        );
 
         subscriptionToken = _subscriptionToken; //cUSD
     }
 
     function subscribe(Plan _plan, uint8 duration) public whenNotPaused {
-        require(plans[_plan].price > 0, "Invalid plan");
+        require(plans[_plan].price > 1, "Invalid plan");
         require(activeSubscriptions[msg.sender] == false, "Already subscribed");
         require(duration <= 12, "Max duration is 12 months");
 
@@ -70,12 +77,17 @@ contract PaymentSubscription is Pausable, Ownable {
             "Insufficient balance"
         );
 
+        //Charge for first month
+        _charge(msg.sender);
+
         subscriptions[msg.sender] = Subscription({
             plan: _plan,
             startDate: block.timestamp,
             nextCharge: block.timestamp + plans[_plan].duration,
             endDate: block.timestamp + (plans[_plan].duration * duration)
         });
+
+        activeSubscriptions[msg.sender] = true;
 
         emit SubscriptionCreated(msg.sender, _plan);
     }
@@ -97,7 +109,7 @@ contract PaymentSubscription is Pausable, Ownable {
             "Incorrect allowance"
         );
 
-        _charge(msg.sender);
+        _charge(subscriber);
     }
 
     function _charge(address subscriber) internal {
@@ -110,26 +122,27 @@ contract PaymentSubscription is Pausable, Ownable {
             "Transfer failed"
         );
 
-        subscriptions[msg.sender].nextCharge =
+        subscriptions[subscriber].nextCharge =
             block.timestamp +
-            plans[subscriptions[msg.sender].plan].duration;
+            plans[subscriptions[subscriber].plan].duration;
 
         //If its end of subscription, cancel it
         if (
-            subscriptions[msg.sender].nextCharge >
-            subscriptions[msg.sender].endDate
+            subscriptions[subscriber].nextCharge >
+            subscriptions[subscriber].endDate
         ) {
-            _cancel(msg.sender);
+            console.log("Canceling subscription");
+            _cancel(subscriber);
         }
 
-        emit SubscriptionCharged(msg.sender, subscriptions[msg.sender].plan);
+        emit SubscriptionCharged(subscriber, subscriptions[subscriber].plan);
     }
 
     function _cancel(address subscriber) internal {
         activeSubscriptions[subscriber] = false;
         delete subscriptions[subscriber];
 
-        emit SubscriptionCanceled(msg.sender);
+        emit SubscriptionCanceled(subscriber);
     }
 
     function withdrawSubscriptionToken(
