@@ -38,10 +38,17 @@ contract PaymentSubscription is Pausable, Ownable {
     //Active subscriptions
     mapping(address => bool) public activeSubscriptions;
 
+    //Evenst for plan creation
+    event PlanCreated(Plan plan, uint256 price, uint256 duration);
+
     //Events to notify subscription status
     event SubscriptionCreated(address indexed subscriber, Plan plan);
     event SubscriptionCanceled(address indexed subscriber);
-    event SubscriptionCharged(address indexed subscriber, Plan plan);
+    event SubscriptionCharged(
+        address indexed subscriber,
+        Plan plan,
+        uint256 nextCharge
+    );
 
     //Token to be used for subscription
     address public subscriptionToken;
@@ -55,6 +62,10 @@ contract PaymentSubscription is Pausable, Ownable {
             12e18,
             30 * 1 days
         );
+
+        emit PlanCreated(Plan.Basic, 2e18, 30 * 1 days);
+        emit PlanCreated(Plan.Premium, 5e18, 30 * 1 days);
+        emit PlanCreated(Plan.Enterprise, 12e18, 30 * 1 days);
 
         subscriptionToken = _subscriptionToken; //cUSD
     }
@@ -77,15 +88,15 @@ contract PaymentSubscription is Pausable, Ownable {
             "Insufficient balance"
         );
 
-        //Charge for first month
-        _charge(msg.sender);
-
         subscriptions[msg.sender] = Subscription({
             plan: _plan,
             startDate: block.timestamp,
             nextCharge: block.timestamp + plans[_plan].duration,
             endDate: block.timestamp + (plans[_plan].duration * duration)
         });
+
+        //Charge for first month
+        _charge(msg.sender);
 
         activeSubscriptions[msg.sender] = true;
 
@@ -131,11 +142,14 @@ contract PaymentSubscription is Pausable, Ownable {
             subscriptions[subscriber].nextCharge >
             subscriptions[subscriber].endDate
         ) {
-            console.log("Canceling subscription");
             _cancel(subscriber);
         }
 
-        emit SubscriptionCharged(subscriber, subscriptions[subscriber].plan);
+        emit SubscriptionCharged(
+            subscriber,
+            subscriptions[subscriber].plan,
+            subscriptions[subscriber].nextCharge
+        );
     }
 
     function _cancel(address subscriber) internal {

@@ -48,6 +48,24 @@ cd packages/react-app
 yarn run dev
 ```
 
+## Transfer Ownership to Defender Relayer
+
+Edit the `scripts/transferOwnership.js` file and change the addresses for the contract and relayer respectively
+
+```bash
+npx hardhat run scripts/transferOwnership.js
+```
+
+## Subscribe to a plan
+
+Run the script to give allowance to *24 cUSD* and subscribe to basic plan for 12 months.
+
+```bash
+npx hardhat run scripts/suscribe.js
+```
+
+Most preferabbly use Defender Admin to interact with the cUSD and PaymentSubscription contracts to perform this actions 
+
 ## Further reasouces
 
 - https://celo-composer-community-docs.vercel.app/
