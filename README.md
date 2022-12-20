@@ -68,6 +68,8 @@ Most preferabbly use Defender Admin to interact with the cUSD and PaymentSubscri
 
 ![Admin Defender](https://github.com/alofeoluwafemi/celo-sage-payment-subscription-platform/blob/990ae5d46ae800ff689ee73b34b69685c247c025/imgs/Screenshot%202022-12-20%20at%204.19.08%20PM.png)
 
-## Further reasouces
+![Admin Defender](https://github.com/alofeoluwafemi/celo-sage-payment-subscription-platform/blob/development/imgs/Screenshot%202022-12-20%20at%204.24.43%20PM.png)
+
+## Further resources
 
 - https://celo-composer-community-docs.vercel.app/
