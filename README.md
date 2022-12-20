@@ -64,7 +64,9 @@ Run the script to give allowance to *24 cUSD* and subscribe to basic plan for 12
 npx hardhat run scripts/suscribe.js
 ```
 
-Most preferabbly use Defender Admin to interact with the cUSD and PaymentSubscription contracts to perform this actions 
+Most preferabbly use Defender Admin to interact with the cUSD and PaymentSubscription contracts to perform this actions
+
+![Admin Defender](https://github.com/alofeoluwafemi/celo-sage-payment-subscription-platform/blob/990ae5d46ae800ff689ee73b34b69685c247c025/imgs/Screenshot%202022-12-20%20at%204.19.08%20PM.png)
 
 ## Further reasouces
 
