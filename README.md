@@ -66,7 +66,11 @@ npx hardhat run scripts/suscribe.js
 
 Most preferabbly use Defender Admin to interact with the cUSD and PaymentSubscription contracts to perform this actions
 
+### Approve cUSD Spend
+
 ![Admin Defender](https://github.com/alofeoluwafemi/celo-sage-payment-subscription-platform/blob/990ae5d46ae800ff689ee73b34b69685c247c025/imgs/Screenshot%202022-12-20%20at%204.19.08%20PM.png)
+
+### Subscribe
 
 ![Admin Defender](https://github.com/alofeoluwafemi/celo-sage-payment-subscription-platform/blob/development/imgs/Screenshot%202022-12-20%20at%204.24.43%20PM.png)
 
