@@ -166,3 +166,6 @@ contract PaymentSubscription is Pausable, Ownable {
         IERC20(subscriptionToken).transfer(to, amount);
     }
 }
+
+// 30 Days plans 0x21FA2F956f8A6b7EDC2dBaEA33652bD895864083
+// 30 Seconds plans 0x21FA2F956f8A6b7EDC2dBaEA33652bD895864083

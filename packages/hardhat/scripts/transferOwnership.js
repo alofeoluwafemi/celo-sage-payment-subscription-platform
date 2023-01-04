@@ -19,7 +19,7 @@ async function main() {
     );
 
     const paymentSubscription = await PaymentSubscription.attach(
-        '0x9b343FFDd8a472ed6C28b5B6F5811cBcc82E531E'
+        '0x21FA2F956f8A6b7EDC2dBaEA33652bD895864083'
     );
 
     console.log('Transfering ownership to Defender Relayer');
