@@ -1,12 +1,99 @@
 import { useCelo } from "@celo/react-celo";
 import PaymentCard from "../components/PaymentCard";
+import {
+  abi as psAbi,
+  address as psAddress,
+} from "@celo-sage-payment-subscription-platform/hardhat/deployments/alfajores/PaymentSubscription.json";
+import { useEffect, useState } from "react";
+import { parseEther } from "ethers/lib/utils";
 
 const truncateAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(38)}`;
 };
 
+const plans = {
+  0: { name: "Basic", price: 2 },
+  1: { name: "Premium", price: 5 },
+  2: { name: "Enterprise", price: 12 },
+};
+
 export default function Home() {
-  const { address, network, connect, destroy } = useCelo();
+  const subscriptionToken = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+  const [activePlan, setActivePlan] = useState(null);
+  const { address, network, connect, destroy, kit } = useCelo();
+  const paymentSubscriptionContract = new kit.connection.web3.eth.Contract(
+    psAbi,
+    psAddress
+  );
+
+  const cUSDContract = new kit.connection.web3.eth.Contract(
+    [
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "spender",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+        ],
+        name: "approve",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+    ],
+    subscriptionToken
+  );
+
+  const subscribeToPlan = async function (plan) {
+    try {
+      const approved = await cUSDContract.methods
+        .approve(
+          psAddress,
+          parseEther((plans[plan].price * 12).toString()).toHexString()
+        )
+        .send({ from: address });
+
+      if (approved) {
+        const tx = await paymentSubscriptionContract.methods
+          .subscribe(plan, 12)
+          .send({
+            from: address,
+          });
+
+        setActivePlan(plan);
+
+        console.log(tx);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const getActivePlan = async () => {
+      const plan = await paymentSubscriptionContract.methods
+        .subscriptions(address)
+        .call();
+
+      if (plan.endDate !== "0") {
+        setActivePlan(parseInt(plan.plan));
+      }
+    };
+
+    getActivePlan();
+  }, [address]);
 
   return (
     <div>
@@ -52,13 +139,28 @@ export default function Home() {
         </div>
         <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
           <div className="flex">
-            <PaymentCard planName={"Basic"} price={2} />
+            <PaymentCard
+              planName={"Basic"}
+              active={activePlan === 0}
+              price={2}
+              onClick={() => subscribeToPlan(0)}
+            />
           </div>
           <div className="flex">
-            <PaymentCard planName={"Premium"} price={5} />
+            <PaymentCard
+              planName={"Premium"}
+              price={5}
+              active={activePlan === 1}
+              onClick={() => subscribeToPlan(1)}
+            />
           </div>
           <div className="flex">
-            <PaymentCard planName={"Enterprise"} price={12} />
+            <PaymentCard
+              planName={"Enterprise"}
+              price={12}
+              active={activePlan === 2}
+              onClick={() => subscribeToPlan(2)}
+            />
           </div>
         </div>
       </div>
